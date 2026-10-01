@@ -17,9 +17,11 @@ type Props = {
 
 export default function Settings({ username, pushOn, onTogglePush, onBack, onLogout, onUsernameChanged }: Props) {
   const { lang, setLang, t } = useI18n()
+  const [editingUsername, setEditingUsername] = useState(false)
   const [newUsername, setNewUsername] = useState(username)
   const [usernameMsg, setUsernameMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
   const [usernameLoading, setUsernameLoading] = useState(false)
+  const [showPwd, setShowPwd] = useState(false)
   const [currentPwd, setCurrentPwd] = useState('')
   const [newPwd, setNewPwd] = useState('')
   const [showCurrentPwd, setShowCurrentPwd] = useState(false)
@@ -59,7 +61,7 @@ export default function Settings({ username, pushOn, onTogglePush, onBack, onLog
 
   async function handleChangeUsername(e: FormEvent) {
     e.preventDefault()
-    if (newUsername.trim() === username) return
+    if (newUsername.trim() === username) { setEditingUsername(false); return }
     setUsernameMsg(null)
     setUsernameLoading(true)
     try {
@@ -71,6 +73,7 @@ export default function Settings({ username, pushOn, onTogglePush, onBack, onLog
         const data = await res.json()
         onUsernameChanged(data.username)
         setUsernameMsg({ type: 'ok', text: t('settings.usernameSuccess') })
+        setEditingUsername(false)
       } else {
         const data = await res.json().catch(() => ({}))
         if (data.error === 'username_taken') {
@@ -95,56 +98,55 @@ export default function Settings({ username, pushOn, onTogglePush, onBack, onLog
         <h2>{t('settings.title')}</h2>
       </div>
 
-      <div className="settings-section">
-        <h3>{t('settings.account')}</h3>
-        <form className="settings-username-form" onSubmit={handleChangeUsername}>
-          <label>
-            {t('settings.username')}
-            <input
-              type="text"
-              value={newUsername}
-              onChange={(e) => setNewUsername(e.target.value)}
-              minLength={2}
-              maxLength={20}
-              required
-            />
-          </label>
-          {usernameMsg && (
-            <p className={usernameMsg.type === 'ok' ? 'settings-pwd-ok' : 'settings-pwd-err'}>{usernameMsg.text}</p>
-          )}
-          {newUsername.trim() !== username && (
-            <button type="submit" className="settings-pwd-submit" disabled={usernameLoading || !newUsername.trim()}>
-              {usernameLoading ? '…' : t('settings.saveUsername')}
-            </button>
-          )}
-        </form>
+      <div className="settings-avatar">
+        {username.charAt(0).toUpperCase()}
       </div>
+      <div className="settings-display-name">{username}</div>
+      {usernameMsg && (
+        <p className={`settings-msg ${usernameMsg.type}`}>{usernameMsg.text}</p>
+      )}
 
-      <div className="settings-section">
-        <h3>{t('settings.language')}</h3>
-        <div className="settings-row">
-          <button
-            className={`settings-lang-btn ${lang === 'fr' ? 'active' : ''}`}
-            onClick={() => setLang('fr')}
-          >
-            Français
+      <div className="settings-group">
+        {editingUsername ? (
+          <form className="settings-edit-row" onSubmit={handleChangeUsername}>
+            <span className="settings-item-label">{t('settings.username')}</span>
+            <div className="settings-edit-inline">
+              <input
+                type="text"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                minLength={2}
+                maxLength={20}
+                autoFocus
+              />
+              <button type="submit" className="settings-save-sm" disabled={usernameLoading}>
+                {usernameLoading ? '…' : '✓'}
+              </button>
+              <button type="button" className="settings-cancel-sm" onClick={() => { setEditingUsername(false); setNewUsername(username) }}>✕</button>
+            </div>
+          </form>
+        ) : (
+          <button className="settings-item" onClick={() => setEditingUsername(true)}>
+            <span className="settings-item-label">{t('settings.username')}</span>
+            <span className="settings-item-right">
+              <span className="settings-item-value">{username}</span>
+              <span className="settings-chevron">›</span>
+            </span>
           </button>
-          <button
-            className={`settings-lang-btn ${lang === 'en' ? 'active' : ''}`}
-            onClick={() => setLang('en')}
-          >
-            English
-          </button>
-        </div>
+        )}
+        <button className="settings-item" onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}>
+          <span className="settings-item-label">{t('settings.language')}</span>
+          <span className="settings-item-right">
+            <span className="settings-item-value">{lang === 'fr' ? 'Français' : 'English'}</span>
+            <span className="settings-chevron">›</span>
+          </span>
+        </button>
       </div>
 
       {pushSupported() && (
-        <div className="settings-section">
-          <h3>{t('settings.pushNotifications')}</h3>
-          <div className="settings-row">
-            <span className="settings-label">
-              {pushOn ? t('settings.pushOn') : t('settings.pushOff')}
-            </span>
+        <div className="settings-group">
+          <div className="settings-item no-hover">
+            <span className="settings-item-label">{t('settings.pushNotifications')}</span>
             <button className="settings-toggle" onClick={onTogglePush}>
               <span className={`settings-toggle-track ${pushOn ? 'on' : ''}`}>
                 <span className="settings-toggle-thumb" />
@@ -154,52 +156,57 @@ export default function Settings({ username, pushOn, onTogglePush, onBack, onLog
         </div>
       )}
 
-      <div className="settings-section">
-        <h3>{t('settings.changePassword')}</h3>
-        <form className="settings-pwd-form" onSubmit={handleChangePassword}>
-          <label>
-            {t('settings.currentPwd')}
-            <div className="password-wrap">
-              <input
-                type={showCurrentPwd ? 'text' : 'password'}
-                value={currentPwd}
-                onChange={(e) => setCurrentPwd(e.target.value)}
-                autoComplete="current-password"
-                required
-              />
-              <button type="button" className="password-eye" onClick={() => setShowCurrentPwd((v) => !v)} tabIndex={-1}>
-                {showCurrentPwd ? <IconEyeOff size={16} /> : <IconEye size={16} />}
-              </button>
-            </div>
-          </label>
-          <label>
-            {t('settings.newPwd')}
-            <div className="password-wrap">
-              <input
-                type={showNewPwd ? 'text' : 'password'}
-                value={newPwd}
-                onChange={(e) => setNewPwd(e.target.value)}
-                autoComplete="new-password"
-                minLength={8}
-                required
-              />
-              <button type="button" className="password-eye" onClick={() => setShowNewPwd((v) => !v)} tabIndex={-1}>
-                {showNewPwd ? <IconEyeOff size={16} /> : <IconEye size={16} />}
-              </button>
-            </div>
-          </label>
-          {pwdMsg && (
-            <p className={pwdMsg.type === 'ok' ? 'settings-pwd-ok' : 'settings-pwd-err'}>{pwdMsg.text}</p>
-          )}
-          <button type="submit" className="settings-pwd-submit" disabled={pwdLoading || !currentPwd || !newPwd}>
-            {pwdLoading ? '…' : t('settings.changePwdBtn')}
-          </button>
-        </form>
+      <div className="settings-group">
+        <button className="settings-item" onClick={() => setShowPwd((v) => !v)}>
+          <span className="settings-item-label">{t('settings.changePassword')}</span>
+          <span className="settings-chevron">{showPwd ? '‹' : '›'}</span>
+        </button>
+        {showPwd && (
+          <form className="settings-pwd-form" onSubmit={handleChangePassword}>
+            <label>
+              {t('settings.currentPwd')}
+              <div className="password-wrap">
+                <input
+                  type={showCurrentPwd ? 'text' : 'password'}
+                  value={currentPwd}
+                  onChange={(e) => setCurrentPwd(e.target.value)}
+                  autoComplete="current-password"
+                  required
+                />
+                <button type="button" className="password-eye" onClick={() => setShowCurrentPwd((v) => !v)} tabIndex={-1}>
+                  {showCurrentPwd ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                </button>
+              </div>
+            </label>
+            <label>
+              {t('settings.newPwd')}
+              <div className="password-wrap">
+                <input
+                  type={showNewPwd ? 'text' : 'password'}
+                  value={newPwd}
+                  onChange={(e) => setNewPwd(e.target.value)}
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                />
+                <button type="button" className="password-eye" onClick={() => setShowNewPwd((v) => !v)} tabIndex={-1}>
+                  {showNewPwd ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                </button>
+              </div>
+            </label>
+            {pwdMsg && (
+              <p className={`settings-msg ${pwdMsg.type}`}>{pwdMsg.text}</p>
+            )}
+            <button type="submit" className="settings-pwd-submit" disabled={pwdLoading || !currentPwd || !newPwd}>
+              {pwdLoading ? '…' : t('settings.changePwdBtn')}
+            </button>
+          </form>
+        )}
       </div>
 
-      <div className="settings-section">
-        <button className="settings-logout" onClick={onLogout}>
-          {t('nav.logout')}
+      <div className="settings-group">
+        <button className="settings-item danger" onClick={onLogout}>
+          <span className="settings-item-label">{t('nav.logout')}</span>
         </button>
       </div>
     </div>

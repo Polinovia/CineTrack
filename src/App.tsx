@@ -81,7 +81,7 @@ function App() {
         </div>
       </header>
       {view === 'list' && <TitleList myUsername={username} />}
-      {view === 'friends' && <FriendList myUsername={username} />}
+      {view === 'friends' && <FriendList />}
     </>
   )
 }

@@ -18,12 +18,11 @@ function isCartoon(t: Title) {
 
 type Props = {
   friend: Friend
-  myUsername: string
   onBack: () => void
   onCopy: (t: Title) => void
 }
 
-export default function FriendTitleList({ friend, myUsername, onBack, onCopy }: Props) {
+export default function FriendTitleList({ friend, onBack, onCopy }: Props) {
   const [titles, setTitles] = useState<Title[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<TypeFilter>('tous')

@@ -5,11 +5,7 @@ import type { Friend, Title } from '../types'
 import FriendTitleList from './FriendTitleList'
 import './FriendList.css'
 
-type Props = {
-  myUsername: string
-}
-
-export default function FriendList({ myUsername }: Props) {
+export default function FriendList() {
   const [friends, setFriends] = useState<Friend[]>([])
   const [loading, setLoading] = useState(true)
   const [addUsername, setAddUsername] = useState('')
@@ -97,7 +93,6 @@ export default function FriendList({ myUsername }: Props) {
     return (
       <FriendTitleList
         friend={viewFriend}
-        myUsername={myUsername}
         onBack={() => setViewFriend(null)}
         onCopy={copyTitle}
       />

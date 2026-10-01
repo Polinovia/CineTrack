@@ -25,7 +25,7 @@ type SortMode = 'recent' | 'title' | 'rating'
 const SORT_LABELS: Record<SortMode, string> = {
   recent: 'Récemment ajouté',
   title: 'Titre (A-Z)',
-  rating: 'Note (meilleure d'abord)',
+  rating: "Note (meilleure d'abord)",
 }
 
 type Props = {

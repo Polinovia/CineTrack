@@ -12,6 +12,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         f.id as friendship_id,
         f.status,
         f.requester_id,
+        (f.requester_id = ${session.sub}) as is_requester,
         case
           when f.requester_id = ${session.sub} then a.id
           else r.id

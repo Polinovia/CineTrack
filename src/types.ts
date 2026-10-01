@@ -38,6 +38,7 @@ export type Friend = {
   friendship_id: number
   status: 'pending' | 'accepted'
   requester_id: number
+  is_requester: boolean
   friend_id: number
   friend_username: string
 }

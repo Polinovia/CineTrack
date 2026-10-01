@@ -12,6 +12,7 @@ import TitleDetailModal from './TitleDetailModal'
 import AddTitleForm from './AddTitleForm'
 import NowWatchingCard from './NowWatchingCard'
 import TitleShelf from './TitleShelf'
+import ConfirmDialog from './ConfirmDialog'
 import './TitleList.css'
 
 type TypeFilter = 'tous' | TitleType | 'cartoon'
@@ -107,10 +108,16 @@ export default function TitleList({ myUsername }: Props) {
     })
   }
 
-  async function remove(title: Title) {
-    if (!confirm(`${t('titles.delete')} « ${title.title} » ?`)) return
-    setTitles((prev) => prev.filter((x) => x.id !== title.id))
-    await apiFetch(`/api/titles/${title.id}`, { method: 'DELETE' })
+  const [confirmState, setConfirmState] = useState<{ msg: string; action: () => void } | null>(null)
+
+  function remove(title: Title) {
+    setConfirmState({
+      msg: `${t('titles.delete')} « ${title.title} » ?`,
+      action: async () => {
+        setTitles((prev) => prev.filter((x) => x.id !== title.id))
+        await apiFetch(`/api/titles/${title.id}`, { method: 'DELETE' })
+      },
+    })
   }
 
   function updateTitle(updated: Title) {
@@ -259,6 +266,15 @@ export default function TitleList({ myUsername }: Props) {
           myUsername={myUsername}
           onClose={() => setOpenId(null)}
           onChange={updateTitle}
+        />
+      )}
+
+      {confirmState && (
+        <ConfirmDialog
+          message={confirmState.msg}
+          danger
+          onConfirm={() => { confirmState.action(); setConfirmState(null) }}
+          onCancel={() => setConfirmState(null)}
         />
       )}
     </div>

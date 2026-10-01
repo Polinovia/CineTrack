@@ -1,4 +1,4 @@
-# My Watchlist
+# CineTrack
 
 Application web personnelle pour suivre les films, séries et animes que tu veux voir ou que tu as vus. Ajoute des amis pour découvrir leurs listes et copier des titres dans la tienne.
 

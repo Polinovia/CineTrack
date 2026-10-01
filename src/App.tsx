@@ -56,7 +56,7 @@ function App() {
       <header className="topbar">
         <span className="brand">
           <Logo size={20} />
-          My Watchlist
+          CineTrack
         </span>
         <div className="who">
           {pushSupported() && (

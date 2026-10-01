@@ -16,8 +16,8 @@ export default defineConfig({
       },
       includeAssets: ['icons/apple-touch-icon.png', 'icons/favicon-32.png'],
       manifest: {
-        name: 'My Watchlist',
-        short_name: 'Watchlist',
+        name: 'CineTrack',
+        short_name: 'CineTrack',
         description: 'Ta liste perso de films, séries et animes à voir et à noter.',
         theme_color: '#12141c',
         background_color: '#12141c',

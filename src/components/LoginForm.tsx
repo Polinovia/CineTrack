@@ -55,7 +55,7 @@ export default function LoginForm({ onLoggedIn }: Props) {
   return (
     <form className="login-form" onSubmit={handleSubmit}>
       <Logo size={32} />
-      <span className="eyebrow">My Watchlist</span>
+      <span className="eyebrow">CineTrack</span>
       <h1>{isRegister ? t('login.createAccount') : t('login.signIn')}</h1>
       <label>
         {t('login.username')}

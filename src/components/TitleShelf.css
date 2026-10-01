@@ -1,0 +1,109 @@
+.shelf {
+  margin-bottom: 1.3rem;
+}
+
+.shelf-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 0.5rem;
+}
+
+.shelf-row {
+  display: flex;
+  gap: 0.7rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+  scrollbar-width: thin;
+}
+
+.shelf-card {
+  position: relative;
+  flex-shrink: 0;
+  width: 7rem;
+  border-radius: 8px;
+  transition: opacity 0.15s;
+}
+
+.shelf-card.draggable {
+  cursor: grab;
+}
+
+.shelf-card.drag-over {
+  outline: 2px dashed var(--accent-2);
+  outline-offset: 4px;
+}
+
+.shelf-card-open {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.shelf-remove {
+  position: absolute;
+  top: -0.3rem;
+  right: -0.3rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.shelf-remove:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.shelf-poster {
+  width: 7rem;
+  height: 10.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: var(--shadow);
+}
+
+.shelf-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.shelf-title {
+  font-size: 0.75rem;
+  line-height: 1.25;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.shelf-subtitle {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--accent-2);
+}

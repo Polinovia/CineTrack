@@ -1,0 +1,152 @@
+.friend-list {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1.4rem 1.2rem 4rem;
+}
+
+.add-friend-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.add-friend-form input {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.add-friend-form input:focus {
+  outline: none;
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 3px var(--accent-2-soft);
+}
+
+.add-friend-form button {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.65rem 1.1rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--bg);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.add-friend-form button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.friend-list .error {
+  color: var(--danger);
+  font-size: 0.82rem;
+  margin: -0.5rem 0 0.8rem;
+}
+
+.friend-list .loading-text {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.friend-section {
+  margin-bottom: 1.5rem;
+}
+
+.friend-section h3 {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 0.6rem;
+}
+
+.friend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  margin-bottom: 0.5rem;
+}
+
+.friend-row.pending {
+  border-color: var(--accent-soft);
+}
+
+.friend-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.friend-name-btn {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1rem;
+  background: none;
+  border: none;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.friend-name-btn:hover {
+  color: var(--accent-2);
+}
+
+.friend-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.accept-btn {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent-2);
+  color: #fff;
+  cursor: pointer;
+}
+
+.reject-btn,
+.remove-friend-btn {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.reject-btn:hover,
+.remove-friend-btn:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.friend-list .empty {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 3rem 0;
+}

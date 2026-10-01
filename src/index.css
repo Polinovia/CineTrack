@@ -1,0 +1,68 @@
+:root {
+  --bg: #12141c;
+  --surface: #1b1e29;
+  --surface-2: #232733;
+  --ink: #ecedf3;
+  --muted: #9aa1b4;
+  --faint: #656c80;
+  --line: #333849;
+  --accent: #f0b429;
+  --accent-ink: #ffe4a3;
+  --accent-soft: #3a3120;
+  --accent-2: #55a39c;
+  --accent-2-soft: #1c3230;
+  --danger: #ff6b60;
+  --shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 14px 32px -16px rgba(0, 0, 0, 0.6);
+  --radius: 12px;
+
+  --display: 'Fraunces', ui-serif, Georgia, serif;
+  --sans: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.55 var(--sans);
+  letter-spacing: 0.1px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  text-wrap: balance;
+  color: var(--ink);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+input[type='checkbox'] {
+  accent-color: var(--accent-2);
+}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { apiFetch } from '../lib/api'
 import { useI18n } from '../lib/i18n'
+import { IconUser, IconHandshake, IconFilm, IconBell } from './Icons'
 import './NotificationList.css'
 
 type Notification = {
@@ -63,10 +64,10 @@ export default function NotificationList({ onBack }: { onBack: () => void }) {
   }
 
   function iconFor(type: string) {
-    if (type === 'friend_request') return '👤'
-    if (type === 'friend_accepted') return '🤝'
-    if (type === 'title_added') return '🎬'
-    return '🔔'
+    if (type === 'friend_request') return <IconUser size={20} />
+    if (type === 'friend_accepted') return <IconHandshake size={20} />
+    if (type === 'title_added') return <IconFilm size={20} />
+    return <IconBell size={20} />
   }
 
   return (

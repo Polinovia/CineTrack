@@ -1,4 +1,5 @@
 import type { Title } from '../types'
+import { IconFilm } from './Icons'
 import './TitleShelf.css'
 
 type Props = {
@@ -19,7 +20,7 @@ export default function TitleShelf({ label, titles, onOpen, getSubtitle }: Props
           <div key={t.id} className="shelf-card">
             <button className="shelf-card-open" onClick={() => onOpen(t.id)}>
               <span className="shelf-poster">
-                {t.poster_url ? <img src={t.poster_url} alt="" loading="lazy" /> : '🎬'}
+                {t.poster_url ? <img src={t.poster_url} alt="" loading="lazy" /> : <IconFilm size={20} />}
               </span>
               <span className="shelf-title">{t.title}</span>
               {getSubtitle && <span className="shelf-subtitle">{getSubtitle(t)}</span>}

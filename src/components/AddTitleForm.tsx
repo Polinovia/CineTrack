@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { apiFetch } from '../lib/api'
 import { useI18n } from '../lib/i18n'
 import type { Title, TitleType } from '../types'
+import { IconFilm } from './Icons'
 import './AddTitleForm.css'
 
 type Suggestion = {
@@ -121,7 +122,7 @@ export default function AddTitleForm({ onAdded }: Props) {
               <li key={s.tmdb_id}>
                 <button type="button" onClick={() => pick(s)}>
                   <span className="suggestion-poster">
-                    {s.poster_url ? <img src={s.poster_url} alt="" /> : '🎬'}
+                    {s.poster_url ? <img src={s.poster_url} alt="" /> : <IconFilm size={16} />}
                   </span>
                   <span>
                     {s.title}

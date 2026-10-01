@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { apiFetch } from '../lib/api'
 import { useI18n, type TKey } from '../lib/i18n'
+import { IconFilm } from './Icons'
 import {
   STATUS_ORDER,
   isUpcoming,
@@ -208,7 +209,7 @@ export default function TitleList({ myUsername }: Props) {
                   {title.poster_url ? (
                     <img src={title.poster_url} alt="" loading="lazy" />
                   ) : (
-                    <span className="poster-fallback">🎬</span>
+                    <span className="poster-fallback"><IconFilm size={20} /></span>
                   )}
                 </span>
                 <span className="title-name">

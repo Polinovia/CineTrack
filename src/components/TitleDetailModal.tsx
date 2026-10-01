@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { apiFetch } from '../lib/api'
 import { useI18n } from '../lib/i18n'
+import { IconFilm } from './Icons'
 import {
   STATUS_ORDER,
   isUpcoming,
@@ -161,7 +162,7 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
           {title.poster_url ? (
             <img src={title.poster_url} alt="" />
           ) : (
-            <span className="detail-poster-fallback">🎬</span>
+            <span className="detail-poster-fallback"><IconFilm size={28} /></span>
           )}
         </span>
         <div className="detail-body">

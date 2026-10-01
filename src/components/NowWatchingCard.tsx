@@ -1,5 +1,6 @@
 import type { Title } from '../types'
 import { useI18n } from '../lib/i18n'
+import { IconFilm } from './Icons'
 import './FeatureCard.css'
 
 type Props = {
@@ -24,7 +25,7 @@ export default function NowWatchingCard({ title, myUsername, onOpen }: Props) {
   return (
     <button className="feature-card" onClick={() => onOpen(title.id)}>
       <span className="feature-poster">
-        {title.poster_url ? <img src={title.poster_url} alt="" loading="lazy" /> : '🎬'}
+        {title.poster_url ? <img src={title.poster_url} alt="" loading="lazy" /> : <IconFilm size={20} />}
       </span>
       <span className="feature-body">
         <span className="feature-label">{t('now.label')}</span>

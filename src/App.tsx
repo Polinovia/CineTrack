@@ -6,6 +6,8 @@ import LoginForm from './components/LoginForm'
 import TitleList from './components/TitleList'
 import FriendList from './components/FriendList'
 import NotificationList from './components/NotificationList'
+import Settings from './components/Settings'
+import { IconBell, IconList, IconUsers, IconSettings, IconLogout } from './components/Icons'
 import Logo from './components/Logo'
 import LoadingScreen from './components/LoadingScreen'
 import './App.css'
@@ -15,7 +17,7 @@ function App() {
   const [username, setUsername] = useState<string | null>(null)
   const [checking, setChecking] = useState(true)
   const [pushOn, setPushOn] = useState(false)
-  const [view, setView] = useState<'list' | 'friends' | 'notifications'>('list')
+  const [view, setView] = useState<'list' | 'friends' | 'notifications' | 'settings'>('list')
   const [menuOpen, setMenuOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -88,7 +90,7 @@ function App() {
             onClick={() => { setView('notifications'); setUnreadCount(0) }}
             aria-label={t('nav.notifications')}
           >
-            🔔
+            <IconBell size={18} />
             {unreadCount > 0 && <span className="notif-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>}
           </button>
         <div className="user-menu-wrap">
@@ -100,23 +102,18 @@ function App() {
               <div className="user-menu-backdrop" onClick={() => setMenuOpen(false)} />
               <div className="user-menu">
                 <button className={view === 'list' ? 'menu-active' : ''} onClick={() => { setView('list'); setMenuOpen(false) }}>
-                  📋 {t('nav.myList')}
+                  <IconList size={16} /> {t('nav.myList')}
                 </button>
                 <button className={view === 'friends' ? 'menu-active' : ''} onClick={() => { setView('friends'); setMenuOpen(false) }}>
-                  👥 {t('nav.friends')}
+                  <IconUsers size={16} /> {t('nav.friends')}
                 </button>
                 <hr className="menu-divider" />
-                <button onClick={() => { setLang(lang === 'fr' ? 'en' : 'fr'); setMenuOpen(false) }}>
-                  🌐 {lang === 'fr' ? 'English' : 'Français'}
+                <button onClick={() => { setView('settings'); setMenuOpen(false) }}>
+                  <IconSettings size={16} /> {t('nav.settings')}
                 </button>
-                {pushSupported() && (
-                  <button onClick={() => { togglePush(); setMenuOpen(false) }}>
-                    {pushOn ? '🔕 Notifications off' : '🔔 Notifications'}
-                  </button>
-                )}
                 <hr className="menu-divider" />
                 <button className="menu-logout" onClick={handleLogout}>
-                  {t('nav.logout')}
+                  <IconLogout size={16} /> {t('nav.logout')}
                 </button>
               </div>
             </>
@@ -128,6 +125,15 @@ function App() {
       {view === 'list' && <TitleList myUsername={username} />}
       {view === 'friends' && <FriendList />}
       {view === 'notifications' && <NotificationList onBack={() => setView('list')} />}
+      {view === 'settings' && (
+        <Settings
+          username={username}
+          pushOn={pushOn}
+          onTogglePush={togglePush}
+          onBack={() => setView('list')}
+          onLogout={handleLogout}
+        />
+      )}
     </>
   )
 }

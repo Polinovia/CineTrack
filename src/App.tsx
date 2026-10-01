@@ -10,6 +10,7 @@ import Settings from './components/Settings'
 import { IconBell, IconList, IconUsers, IconSettings, IconLogout } from './components/Icons'
 import Logo from './components/Logo'
 import LoadingScreen from './components/LoadingScreen'
+import Toast from './components/Toast'
 import './App.css'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
   const [view, setView] = useState<'list' | 'friends' | 'notifications' | 'settings'>('list')
   const [menuOpen, setMenuOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [toast, setToast] = useState<{ msg: string; type: 'error' } | null>(null)
 
   useEffect(() => {
     apiFetch('/api/auth/me')
@@ -54,7 +56,7 @@ function App() {
     } else {
       const ok = await subscribeToPush()
       setPushOn(ok)
-      if (!ok) alert(t('nav.pushDenied'))
+      if (!ok) setToast({ msg: t('nav.pushDenied'), type: 'error' })
     }
   }
 
@@ -74,10 +76,10 @@ function App() {
   return (
     <>
       <header className="topbar">
-        <span className="brand">
+        <button className="brand" onClick={() => setView('list')}>
           <Logo size={20} />
           CineTrack
-        </span>
+        </button>
         <div className="topbar-right">
           <button
             className="lang-toggle"
@@ -134,6 +136,10 @@ function App() {
           onLogout={handleLogout}
           onUsernameChanged={(name) => setUsername(name)}
         />
+      )}
+
+      {toast && (
+        <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />
       )}
     </>
   )

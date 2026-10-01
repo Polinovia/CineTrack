@@ -124,6 +124,94 @@
   transform: translateX(20px);
 }
 
+.settings-pwd-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.settings-pwd-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.settings-pwd-form .password-wrap {
+  position: relative;
+}
+
+.settings-pwd-form input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  padding: 0.6rem 2.8rem 0.6rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  transition: border-color 0.15s;
+}
+
+.settings-pwd-form input:focus {
+  outline: none;
+  border-color: var(--accent-2);
+}
+
+.settings-pwd-form .password-eye {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.settings-pwd-form .password-eye:hover {
+  color: var(--ink);
+}
+
+.settings-pwd-submit {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.65rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--bg);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.settings-pwd-submit:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.settings-pwd-submit:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.settings-pwd-ok {
+  font-size: 0.82rem;
+  color: var(--accent-2);
+  margin: 0;
+}
+
+.settings-pwd-err {
+  font-size: 0.82rem;
+  color: var(--danger);
+  margin: 0;
+}
+
 .settings-logout {
   width: 100%;
   font-family: var(--sans);

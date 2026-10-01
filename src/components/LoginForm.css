@@ -96,6 +96,36 @@
   margin: -0.4rem 0 0.2rem;
 }
 
+.password-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrap input {
+  width: 100%;
+  padding-right: 2.8rem;
+  box-sizing: border-box;
+}
+
+.password-eye {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-eye:hover {
+  color: var(--ink);
+}
+
 .login-lang {
   position: fixed;
   top: 1.2rem;

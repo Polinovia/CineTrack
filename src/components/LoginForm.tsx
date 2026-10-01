@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { apiFetch } from '../lib/api'
 import { useI18n } from '../lib/i18n'
 import Logo from './Logo'
+import { IconEye, IconEyeOff } from './Icons'
 import './LoginForm.css'
 
 type Props = {
@@ -16,6 +17,7 @@ export default function LoginForm({ onLoggedIn }: Props) {
   const [isRegister, setIsRegister] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [showPwd, setShowPwd] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -73,14 +75,19 @@ export default function LoginForm({ onLoggedIn }: Props) {
       </label>
       <label>
         {t('login.password')}
-        <input
-          type="password"
-          autoComplete={isRegister ? 'new-password' : 'current-password'}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          minLength={isRegister ? 8 : 4}
-          required
-        />
+        <div className="password-wrap">
+          <input
+            type={showPwd ? 'text' : 'password'}
+            autoComplete={isRegister ? 'new-password' : 'current-password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            minLength={isRegister ? 8 : 4}
+            required
+          />
+          <button type="button" className="password-eye" onClick={() => setShowPwd((v) => !v)} tabIndex={-1}>
+            {showPwd ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+          </button>
+        </div>
       </label>
       {error && <p className="error">{error}</p>}
       <button type="submit" disabled={loading}>

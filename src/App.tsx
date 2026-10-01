@@ -15,6 +15,7 @@ function App() {
   const [checking, setChecking] = useState(true)
   const [pushOn, setPushOn] = useState(false)
   const [view, setView] = useState<'list' | 'friends'>('list')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     apiFetch('/api/auth/me')
@@ -43,6 +44,7 @@ function App() {
     await apiFetch('/api/auth/logout', { method: 'POST' })
     setUsername(null)
     setView('list')
+    setMenuOpen(false)
   }
 
   if (checking) return <LoadingScreen />
@@ -58,32 +60,40 @@ function App() {
           <Logo size={20} />
           CineTrack
         </span>
-        <div className="who">
-          {pushSupported() && (
-            <button
-              className={`push-toggle ${pushOn ? 'active' : ''}`}
-              onClick={togglePush}
-            >
-              {pushOn ? '🔔' : '🔕'}
-            </button>
+        <div className="user-menu-wrap">
+          <button className="user-menu-btn" onClick={() => setMenuOpen((v) => !v)}>
+            {username} <span className="user-chevron">{menuOpen ? '▲' : '▼'}</span>
+          </button>
+          {menuOpen && (
+            <>
+              <div className="user-menu-backdrop" onClick={() => setMenuOpen(false)} />
+              <div className="user-menu">
+                <button onClick={() => { setLang(lang === 'fr' ? 'en' : 'fr'); setMenuOpen(false) }}>
+                  {lang === 'fr' ? '🌐 English' : '🌐 Français'}
+                </button>
+                {pushSupported() && (
+                  <button onClick={() => { togglePush(); setMenuOpen(false) }}>
+                    {pushOn ? '🔕 Notifications off' : '🔔 Notifications'}
+                  </button>
+                )}
+                <button className="menu-logout" onClick={handleLogout}>
+                  {t('nav.logout')}
+                </button>
+              </div>
+            </>
           )}
-          <nav className="nav-tabs">
-            <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
-              {t('nav.myList')}
-            </button>
-            <button className={view === 'friends' ? 'active' : ''} onClick={() => setView('friends')}>
-              {t('nav.friends')}
-            </button>
-          </nav>
-          <button className="lang-toggle" onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}>
-            {lang === 'fr' ? 'EN' : 'FR'}
-          </button>
-          <span className="username">{username}</span>
-          <button className="logout" onClick={handleLogout}>
-            {t('nav.logout')}
-          </button>
         </div>
       </header>
+
+      <nav className="page-tabs">
+        <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
+          {t('nav.myList')}
+        </button>
+        <button className={view === 'friends' ? 'active' : ''} onClick={() => setView('friends')}>
+          {t('nav.friends')}
+        </button>
+      </nav>
+
       {view === 'list' && <TitleList myUsername={username} />}
       {view === 'friends' && <FriendList />}
     </>

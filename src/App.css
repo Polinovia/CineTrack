@@ -4,7 +4,7 @@
   justify-content: space-between;
   max-width: 640px;
   margin: 0 auto;
-  padding: 1.4rem 1.2rem 1rem;
+  padding: 1.4rem 1.2rem 0.6rem;
 }
 
 @media (min-width: 900px) {
@@ -25,20 +25,17 @@
   letter-spacing: -0.01em;
 }
 
-.topbar .who {
+/* User dropdown menu */
+.user-menu-wrap {
+  position: relative;
+}
+
+.user-menu-btn {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  font-size: 0.85rem;
-}
-
-.topbar .username {
-  color: var(--muted);
-}
-
-.topbar .logout {
+  gap: 0.4rem;
   font-family: var(--sans);
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   padding: 0.4rem 0.75rem;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -48,35 +45,74 @@
   transition: border-color 0.15s, color 0.15s;
 }
 
-.topbar .logout:hover {
-  border-color: var(--muted);
+.user-menu-btn:hover {
+  border-color: var(--accent-2);
   color: var(--ink);
 }
 
-.push-toggle {
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
+.user-chevron {
+  font-size: 0.55rem;
+}
+
+.user-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+}
+
+.user-menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  min-width: 10rem;
+  background: var(--surface);
   border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 0.3rem 0;
+  z-index: 10;
+}
+
+.user-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  padding: 0.55rem 0.9rem;
+  border: none;
   background: transparent;
-  font-size: 1rem;
+  color: var(--ink);
   cursor: pointer;
-  transition: border-color 0.15s;
+  transition: background 0.1s;
 }
 
-.push-toggle.active {
-  border-color: var(--accent);
+.user-menu button:hover {
+  background: var(--surface-2);
 }
 
-.nav-tabs {
+.user-menu .menu-logout {
+  color: var(--danger);
+}
+
+/* Page tabs (Ma liste / Amis) */
+.page-tabs {
   display: flex;
   gap: 0.3rem;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1.2rem 0.6rem;
 }
 
-.nav-tabs button {
+@media (min-width: 900px) {
+  .page-tabs {
+    max-width: none;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.page-tabs button {
   font-family: var(--mono);
   font-size: 0.72rem;
   letter-spacing: 0.03em;
@@ -89,32 +125,13 @@
   transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 
-.nav-tabs button:hover {
+.page-tabs button:hover {
   border-color: var(--accent-2);
   color: var(--ink);
 }
 
-.nav-tabs button.active {
+.page-tabs button.active {
   background: var(--ink);
   color: var(--bg);
   border-color: var(--ink);
-}
-
-.lang-toggle {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 0.3rem 0.55rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.lang-toggle:hover {
-  border-color: var(--accent-2);
-  color: var(--ink);
 }

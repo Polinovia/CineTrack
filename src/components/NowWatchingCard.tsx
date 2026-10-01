@@ -1,4 +1,5 @@
-import { STATUS_LABELS, type Title } from '../types'
+import type { Title } from '../types'
+import { useI18n } from '../lib/i18n'
 import './FeatureCard.css'
 
 type Props = {
@@ -8,10 +9,12 @@ type Props = {
 }
 
 export default function NowWatchingCard({ title, myUsername, onOpen }: Props) {
+  const { t, statusLabel } = useI18n()
+
   if (!title) {
     return (
       <div className="feature-card empty">
-        <span className="feature-empty-text">Épingle un titre depuis sa fiche pour le voir ici</span>
+        <span className="feature-empty-text">{t('now.empty')}</span>
       </div>
     )
   }
@@ -24,11 +27,11 @@ export default function NowWatchingCard({ title, myUsername, onOpen }: Props) {
         {title.poster_url ? <img src={title.poster_url} alt="" loading="lazy" /> : '🎬'}
       </span>
       <span className="feature-body">
-        <span className="feature-label">En ce moment</span>
+        <span className="feature-label">{t('now.label')}</span>
         <span className="feature-title">{title.title}</span>
         {myRating && (
           <span className="feature-viewers">
-            {STATUS_LABELS[myRating.status]}
+            {statusLabel(myRating.status)}
             {myRating.score !== null && ` · ${myRating.score}/10`}
           </span>
         )}

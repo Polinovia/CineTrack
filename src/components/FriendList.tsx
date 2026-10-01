@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { apiFetch } from '../lib/api'
+import { useI18n } from '../lib/i18n'
 import type { Friend, Title } from '../types'
 import FriendTitleList from './FriendTitleList'
 import './FriendList.css'
 
 export default function FriendList() {
+  const { t } = useI18n()
   const [friends, setFriends] = useState<Friend[]>([])
   const [loading, setLoading] = useState(true)
   const [addUsername, setAddUsername] = useState('')
@@ -32,10 +34,10 @@ export default function FriendList() {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => null)
-        if (data?.error === 'user_not_found') setAddError('Utilisateur introuvable.')
-        else if (data?.error === 'cannot_add_self') setAddError('Tu ne peux pas t\'ajouter toi-même.')
-        else if (data?.error === 'already_exists') setAddError('Demande déjà envoyée.')
-        else setAddError('Erreur, réessaie.')
+        if (data?.error === 'user_not_found') setAddError(t('friends.notFound'))
+        else if (data?.error === 'cannot_add_self') setAddError(t('friends.cannotSelf'))
+        else if (data?.error === 'already_exists') setAddError(t('friends.alreadySent'))
+        else setAddError(t('friends.error'))
         return
       }
       const data = await res.json()
@@ -67,7 +69,7 @@ export default function FriendList() {
   }
 
   async function removeFriend(f: Friend) {
-    if (!confirm(`Retirer ${f.friend_username} de tes amis ?`)) return
+    if (!confirm(`${t('friends.remove')} ${f.friend_username} ?`)) return
     await apiFetch('/api/friends', {
       method: 'DELETE',
       body: JSON.stringify({ friendship_id: f.friendship_id }),
@@ -75,17 +77,17 @@ export default function FriendList() {
     setFriends((prev) => prev.filter((x) => x.friendship_id !== f.friendship_id))
   }
 
-  async function copyTitle(t: Title) {
+  async function copyTitle(titleObj: Title) {
     const res = await apiFetch('/api/titles/copy', {
       method: 'POST',
-      body: JSON.stringify({ title_id: t.id }),
+      body: JSON.stringify({ title_id: titleObj.id }),
     })
     if (res.ok) {
-      alert(`« ${t.title} » ajouté à ta liste !`)
+      alert(`« ${titleObj.title} » ${t('friends.addToList')}!`)
     } else {
       const data = await res.json().catch(() => null)
-      if (data?.error === 'already_yours') alert('Ce titre est déjà dans ta liste.')
-      else alert('Erreur lors de la copie.')
+      if (data?.error === 'already_yours') alert(t('friends.alreadyYours'))
+      else alert(t('friends.copyError'))
     }
   }
 
@@ -107,27 +109,27 @@ export default function FriendList() {
       <form className="add-friend-form" onSubmit={handleAdd}>
         <input
           type="text"
-          placeholder="Ajouter un ami par pseudo…"
+          placeholder={t('friends.addPlaceholder')}
           value={addUsername}
           onChange={(e) => setAddUsername(e.target.value)}
         />
         <button type="submit" disabled={adding || !addUsername.trim()}>
-          Ajouter
+          {t('friends.add')}
         </button>
       </form>
       {addError && <p className="error">{addError}</p>}
 
-      {loading && <p className="loading-text">Chargement…</p>}
+      {loading && <p className="loading-text">{t('friendList.loading')}</p>}
 
       {pending.length > 0 && (
         <div className="friend-section">
-          <h3>Demandes en attente</h3>
+          <h3>{t('friends.pending')}</h3>
           {pending.map((f) => (
             <div key={f.friendship_id} className="friend-row pending">
               <span className="friend-name">{f.friend_username}</span>
               <div className="friend-actions">
-                <button className="accept-btn" onClick={() => accept(f)}>Accepter</button>
-                <button className="reject-btn" onClick={() => reject(f)}>Refuser</button>
+                <button className="accept-btn" onClick={() => accept(f)}>{t('friends.accept')}</button>
+                <button className="reject-btn" onClick={() => reject(f)}>{t('friends.reject')}</button>
               </div>
             </div>
           ))}
@@ -136,20 +138,20 @@ export default function FriendList() {
 
       {accepted.length > 0 && (
         <div className="friend-section">
-          <h3>Mes amis</h3>
+          <h3>{t('friends.myFriends')}</h3>
           {accepted.map((f) => (
             <div key={f.friendship_id} className="friend-row">
               <button className="friend-name-btn" onClick={() => setViewFriend(f)}>
                 {f.friend_username}
               </button>
-              <button className="remove-friend-btn" onClick={() => removeFriend(f)}>Retirer</button>
+              <button className="remove-friend-btn" onClick={() => removeFriend(f)}>{t('friends.remove')}</button>
             </div>
           ))}
         </div>
       )}
 
       {!loading && friends.length === 0 && (
-        <p className="empty">Pas encore d'amis. Ajoute quelqu'un par son pseudo !</p>
+        <p className="empty">{t('friends.empty')}</p>
       )}
     </div>
   )

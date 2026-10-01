@@ -95,3 +95,22 @@
   font-size: 0.82rem;
   margin: -0.4rem 0 0.2rem;
 }
+
+.login-form .lang-toggle {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.login-form .lang-toggle:hover {
+  border-color: var(--accent-2);
+  color: var(--ink);
+}

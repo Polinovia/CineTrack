@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { apiFetch } from '../lib/api'
+import { useI18n, type TKey } from '../lib/i18n'
 import {
-  STATUS_LABELS,
   STATUS_ORDER,
-  TYPE_LABELS,
   isUpcoming,
   type Title,
   type TitleType,
@@ -22,10 +21,10 @@ function isCartoon(t: Title) {
 
 type SortMode = 'recent' | 'title' | 'rating'
 
-const SORT_LABELS: Record<SortMode, string> = {
-  recent: 'Récemment ajouté',
-  title: 'Titre (A-Z)',
-  rating: "Note (meilleure d'abord)",
+const SORT_KEYS: Record<SortMode, TKey> = {
+  recent: 'sort.recent',
+  title: 'sort.title',
+  rating: 'sort.rating',
 }
 
 type Props = {
@@ -33,6 +32,7 @@ type Props = {
 }
 
 export default function TitleList({ myUsername }: Props) {
+  const { t, typeLabel, statusLabel } = useI18n()
   const [titles, setTitles] = useState<Title[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<TypeFilter>('tous')
@@ -83,14 +83,14 @@ export default function TitleList({ myUsername }: Props) {
     )
   }
 
-  async function cycleMyStatus(t: Title) {
-    const mine = t.ratings.find((r) => r.username === myUsername)
+  async function cycleMyStatus(title: Title) {
+    const mine = title.ratings.find((r) => r.username === myUsername)
     const current = mine?.status ?? 'a_voir'
     const next = STATUS_ORDER[(STATUS_ORDER.indexOf(current) + 1) % STATUS_ORDER.length]
     updateTitle({
-      ...t,
+      ...title,
       ratings: [
-        ...t.ratings.filter((r) => r.username !== myUsername),
+        ...title.ratings.filter((r) => r.username !== myUsername),
         {
           username: myUsername,
           status: next,
@@ -100,16 +100,16 @@ export default function TitleList({ myUsername }: Props) {
         },
       ],
     })
-    await apiFetch(`/api/titles/${t.id}/rating`, {
+    await apiFetch(`/api/titles/${title.id}/rating`, {
       method: 'PUT',
       body: JSON.stringify({ status: next }),
     })
   }
 
-  async function remove(t: Title) {
-    if (!confirm(`Retirer « ${t.title} » de la liste ?`)) return
-    setTitles((prev) => prev.filter((x) => x.id !== t.id))
-    await apiFetch(`/api/titles/${t.id}`, { method: 'DELETE' })
+  async function remove(title: Title) {
+    if (!confirm(`${t('titles.delete')} « ${title.title} » ?`)) return
+    setTitles((prev) => prev.filter((x) => x.id !== title.id))
+    await apiFetch(`/api/titles/${title.id}`, { method: 'DELETE' })
   }
 
   function updateTitle(updated: Title) {
@@ -122,10 +122,10 @@ export default function TitleList({ myUsername }: Props) {
     )
   }
 
-  function ratingSummary(t: Title) {
-    const mine = t.ratings.find((r) => r.username === myUsername)
+  function ratingSummary(title: Title) {
+    const mine = title.ratings.find((r) => r.username === myUsername)
     if (!mine) return ''
-    const parts: string[] = [STATUS_LABELS[mine.status]]
+    const parts: string[] = [statusLabel(mine.status)]
     if (mine.score !== null) parts.push(`${mine.score}/10`)
     return parts.join(' · ')
   }
@@ -144,10 +144,10 @@ export default function TitleList({ myUsername }: Props) {
             />
           </div>
           <TitleShelf
-            label="À venir"
+            label={t('titles.upcoming')}
             titles={upcomingTitles}
             onOpen={setOpenId}
-            getSubtitle={(t) => formatReleaseDate(t.release_date!)}
+            getSubtitle={(title) => formatReleaseDate(title.release_date!)}
           />
         </>
       )}
@@ -155,7 +155,7 @@ export default function TitleList({ myUsername }: Props) {
       <input
         type="search"
         className="search-input"
-        placeholder="Rechercher un titre…"
+        placeholder={t('titles.search')}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
@@ -168,14 +168,14 @@ export default function TitleList({ myUsername }: Props) {
               className={filter === value ? 'active' : ''}
               onClick={() => setFilter(value)}
             >
-              {value === 'tous' ? 'Tous' : value === 'cartoon' ? 'Cartoon' : TYPE_LABELS[value]}
+              {value === 'tous' ? t('filter.all') : value === 'cartoon' ? 'Cartoon' : typeLabel(value)}
             </button>
           ))}
         </div>
         <select className="sort-select" value={sort} onChange={(e) => setSort(e.target.value as SortMode)}>
-          {Object.entries(SORT_LABELS).map(([value, label]) => (
+          {(Object.keys(SORT_KEYS) as SortMode[]).map((value) => (
             <option key={value} value={value}>
-              {label}
+              {t(SORT_KEYS[value])}
             </option>
           ))}
         </select>
@@ -195,55 +195,55 @@ export default function TitleList({ myUsername }: Props) {
           ))}
         </ul>
       )}
-      {!loading && visible.length === 0 && <p className="empty">Rien ici pour l'instant.</p>}
+      {!loading && visible.length === 0 && <p className="empty">{t('titles.empty')}</p>}
 
       {!loading && (
       <ul className="titles">
-        {visible.map((t) => {
-          const myStatus = t.ratings.find((r) => r.username === myUsername)?.status ?? 'a_voir'
+        {visible.map((title) => {
+          const myStatus = title.ratings.find((r) => r.username === myUsername)?.status ?? 'a_voir'
           return (
-            <li key={t.id}>
-              <div className="title-row" onClick={() => setOpenId(t.id)}>
+            <li key={title.id}>
+              <div className="title-row" onClick={() => setOpenId(title.id)}>
                 <span className="poster">
-                  {t.poster_url ? (
-                    <img src={t.poster_url} alt="" loading="lazy" />
+                  {title.poster_url ? (
+                    <img src={title.poster_url} alt="" loading="lazy" />
                   ) : (
                     <span className="poster-fallback">🎬</span>
                   )}
                 </span>
                 <span className="title-name">
                   <span className="title-text">
-                    <span className={`type-badge type-${t.type}`}>{TYPE_LABELS[t.type]}</span>
-                    {t.tmdb_rating !== null && (
-                      <span className="tmdb-rating">★ {Number(t.tmdb_rating).toFixed(1)}</span>
+                    <span className={`type-badge type-${title.type}`}>{typeLabel(title.type)}</span>
+                    {title.tmdb_rating !== null && (
+                      <span className="tmdb-rating">★ {Number(title.tmdb_rating).toFixed(1)}</span>
                     )}
-                    {isUpcoming(t) && <span className="upcoming-badge">À venir</span>}
-                    {t.title}
+                    {isUpcoming(title) && <span className="upcoming-badge">{t('titles.upcoming')}</span>}
+                    {title.title}
                   </span>
-                  {t.description && <span className="description">{t.description}</span>}
-                  {t.genres && <span className="genres">{t.genres}</span>}
-                  <span className="rating-summary">{ratingSummary(t)}</span>
+                  {title.description && <span className="description">{title.description}</span>}
+                  {title.genres && <span className="genres">{title.genres}</span>}
+                  <span className="rating-summary">{ratingSummary(title)}</span>
                 </span>
                 <span className="row-actions">
                   <button
                     className={`status-pill status-${myStatus}`}
-                    title="Ton statut (clique pour changer)"
+                    title={t('titles.statusHint')}
                     onClick={(e) => {
                       e.stopPropagation()
-                      cycleMyStatus(t)
+                      cycleMyStatus(title)
                     }}
                   >
-                    {STATUS_LABELS[myStatus]}
+                    {statusLabel(myStatus)}
                   </button>
                 </span>
                 <button
                   className="delete-btn"
                   onClick={(e) => {
                     e.stopPropagation()
-                    remove(t)
+                    remove(title)
                   }}
                 >
-                  Supprimer
+                  {t('titles.delete')}
                 </button>
               </div>
             </li>

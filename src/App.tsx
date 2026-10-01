@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { apiFetch } from './lib/api'
+import { useI18n } from './lib/i18n'
 import { isSubscribedToPush, pushSupported, subscribeToPush, unsubscribeFromPush } from './lib/push'
 import LoginForm from './components/LoginForm'
 import TitleList from './components/TitleList'
@@ -9,6 +10,7 @@ import LoadingScreen from './components/LoadingScreen'
 import './App.css'
 
 function App() {
+  const { lang, setLang, t } = useI18n()
   const [username, setUsername] = useState<string | null>(null)
   const [checking, setChecking] = useState(true)
   const [pushOn, setPushOn] = useState(false)
@@ -33,7 +35,7 @@ function App() {
     } else {
       const ok = await subscribeToPush()
       setPushOn(ok)
-      if (!ok) alert('Notifications refusées ou indisponibles sur cet appareil.')
+      if (!ok) alert(t('nav.pushDenied'))
     }
   }
 
@@ -61,22 +63,24 @@ function App() {
             <button
               className={`push-toggle ${pushOn ? 'active' : ''}`}
               onClick={togglePush}
-              title={pushOn ? 'Désactiver les notifications' : 'Activer les notifications'}
             >
               {pushOn ? '🔔' : '🔕'}
             </button>
           )}
           <nav className="nav-tabs">
             <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
-              Ma liste
+              {t('nav.myList')}
             </button>
             <button className={view === 'friends' ? 'active' : ''} onClick={() => setView('friends')}>
-              Amis
+              {t('nav.friends')}
             </button>
           </nav>
+          <button className="lang-toggle" onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}>
+            {lang === 'fr' ? 'EN' : 'FR'}
+          </button>
           <span className="username">{username}</span>
           <button className="logout" onClick={handleLogout}>
-            Se déconnecter
+            {t('nav.logout')}
           </button>
         </div>
       </header>

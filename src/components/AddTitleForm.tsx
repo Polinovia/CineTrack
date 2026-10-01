@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { apiFetch } from '../lib/api'
-import { TYPE_LABELS, type Title, type TitleType } from '../types'
+import { useI18n } from '../lib/i18n'
+import type { Title, TitleType } from '../types'
 import './AddTitleForm.css'
 
 type Suggestion = {
@@ -16,6 +17,7 @@ type Props = {
 }
 
 export default function AddTitleForm({ onAdded }: Props) {
+  const { t, typeLabel } = useI18n()
   const [text, setText] = useState('')
   const [type, setType] = useState<TitleType>('film')
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
@@ -23,6 +25,8 @@ export default function AddTitleForm({ onAdded }: Props) {
   const [showList, setShowList] = useState(false)
   const [adding, setAdding] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const typeOptions: TitleType[] = ['film', 'serie', 'anime']
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -89,16 +93,16 @@ export default function AddTitleForm({ onAdded }: Props) {
           setSelected(null)
         }}
       >
-        {Object.entries(TYPE_LABELS).map(([value, label]) => (
+        {typeOptions.map((value) => (
           <option key={value} value={value}>
-            {label}
+            {typeLabel(value)}
           </option>
         ))}
       </select>
       <div className="add-form-input">
         <input
           type="text"
-          placeholder="Ajouter un titre…"
+          placeholder={t('add.placeholder')}
           value={text}
           onChange={(e) => handleTextChange(e.target.value)}
           onFocus={() => suggestions.length > 0 && setShowList(true)}
@@ -123,7 +127,7 @@ export default function AddTitleForm({ onAdded }: Props) {
         )}
       </div>
       <button type="submit" className="add-form-submit" disabled={adding || !text.trim()}>
-        Ajouter
+        {t('add.submit')}
       </button>
     </form>
   )

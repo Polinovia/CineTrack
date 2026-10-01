@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { apiFetch } from '../lib/api'
+import { useI18n } from '../lib/i18n'
 import {
-  STATUS_LABELS,
-  TYPE_LABELS,
   isUpcoming,
   type Friend,
   type Title,
@@ -23,6 +22,7 @@ type Props = {
 }
 
 export default function FriendTitleList({ friend, onBack, onCopy }: Props) {
+  const { lang, t, typeLabel, statusLabel } = useI18n()
   const [titles, setTitles] = useState<Title[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<TypeFilter>('tous')
@@ -46,17 +46,19 @@ export default function FriendTitleList({ friend, onBack, onCopy }: Props) {
     return q ? byType.filter((t) => t.title.toLowerCase().includes(q)) : byType
   }, [titles, filter, query])
 
+  const listOfLabel = lang === 'fr' ? `Liste de ${friend.friend_username}` : `${friend.friend_username}'s list`
+
   return (
     <div className="title-list">
       <div className="friend-header">
-        <button className="back-btn" onClick={onBack}>← Retour</button>
-        <h2>Liste de {friend.friend_username}</h2>
+        <button className="back-btn" onClick={onBack}>{t('friendList.back')}</button>
+        <h2>{listOfLabel}</h2>
       </div>
 
       <input
         type="search"
         className="search-input"
-        placeholder="Rechercher…"
+        placeholder={t('friendList.search')}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
@@ -69,43 +71,43 @@ export default function FriendTitleList({ friend, onBack, onCopy }: Props) {
               className={filter === value ? 'active' : ''}
               onClick={() => setFilter(value)}
             >
-              {value === 'tous' ? 'Tous' : value === 'cartoon' ? 'Cartoon' : TYPE_LABELS[value]}
+              {value === 'tous' ? t('filter.all') : value === 'cartoon' ? 'Cartoon' : typeLabel(value)}
             </button>
           ))}
         </div>
       </div>
 
-      {loading && <p className="loading-text">Chargement…</p>}
-      {!loading && visible.length === 0 && <p className="empty">Aucun titre.</p>}
+      {loading && <p className="loading-text">{t('friendList.loading')}</p>}
+      {!loading && visible.length === 0 && <p className="empty">{t('friendList.empty')}</p>}
 
       {!loading && (
         <ul className="titles">
-          {visible.map((t) => {
-            const ownerRating = t.ratings.find((r) => r.username === friend.friend_username)
+          {visible.map((title) => {
+            const ownerRating = title.ratings.find((r) => r.username === friend.friend_username)
             return (
-              <li key={t.id}>
+              <li key={title.id}>
                 <div className="title-row">
                   <span className="poster">
-                    {t.poster_url ? (
-                      <img src={t.poster_url} alt="" loading="lazy" />
+                    {title.poster_url ? (
+                      <img src={title.poster_url} alt="" loading="lazy" />
                     ) : (
                       <span className="poster-fallback">🎬</span>
                     )}
                   </span>
                   <span className="title-name">
                     <span className="title-text">
-                      <span className={`type-badge type-${t.type}`}>{TYPE_LABELS[t.type]}</span>
-                      {t.tmdb_rating !== null && (
-                        <span className="tmdb-rating">★ {Number(t.tmdb_rating).toFixed(1)}</span>
+                      <span className={`type-badge type-${title.type}`}>{typeLabel(title.type)}</span>
+                      {title.tmdb_rating !== null && (
+                        <span className="tmdb-rating">★ {Number(title.tmdb_rating).toFixed(1)}</span>
                       )}
-                      {isUpcoming(t) && <span className="upcoming-badge">À venir</span>}
-                      {t.title}
+                      {isUpcoming(title) && <span className="upcoming-badge">{t('titles.upcoming')}</span>}
+                      {title.title}
                     </span>
-                    {t.description && <span className="description">{t.description}</span>}
-                    {t.genres && <span className="genres">{t.genres}</span>}
+                    {title.description && <span className="description">{title.description}</span>}
+                    {title.genres && <span className="genres">{title.genres}</span>}
                     {ownerRating && (
                       <span className="rating-summary">
-                        {STATUS_LABELS[ownerRating.status]}
+                        {statusLabel(ownerRating.status)}
                         {ownerRating.score !== null && ` · ${ownerRating.score}/10`}
                         {ownerRating.comment && ` — ${ownerRating.comment}`}
                       </span>
@@ -114,13 +116,12 @@ export default function FriendTitleList({ friend, onBack, onCopy }: Props) {
                   <span className="row-actions">
                     <button
                       className="copy-btn"
-                      title="Ajouter à ma liste"
                       onClick={(e) => {
                         e.stopPropagation()
-                        onCopy(t)
+                        onCopy(title)
                       }}
                     >
-                      + Ma liste
+                      {t('friends.addToList')}
                     </button>
                   </span>
                 </div>

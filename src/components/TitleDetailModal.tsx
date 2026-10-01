@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { apiFetch } from '../lib/api'
+import { useI18n } from '../lib/i18n'
 import {
-  STATUS_LABELS,
   STATUS_ORDER,
-  TYPE_LABELS,
   isUpcoming,
   type Title,
   type TitleStatus,
@@ -22,6 +21,7 @@ type Props = {
 }
 
 export default function TitleDetailModal({ title, myUsername, onClose, onChange }: Props) {
+  const { lang, t, typeLabel, statusLabel } = useI18n()
   const myRating = title.ratings.find((r) => r.username === myUsername)
 
   const [status, setStatus] = useState<TitleStatus>(myRating?.status ?? 'a_voir')
@@ -84,7 +84,7 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
   }
 
   const isFilm = title.type === 'film'
-  const unitLabel = isFilm ? 'Films vus' : 'Saisons vues'
+  const unitLabel = isFilm ? t('detail.filmsWatched') : t('detail.seasonsWatched')
   const unitPrefix = isFilm ? 'F' : 'S'
 
   const mySeasons = title.seasons_watched.find((s) => s.username === myUsername)?.seasons ?? []
@@ -143,6 +143,16 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
     )
   }
 
+  function sagaOrSeasonText() {
+    if (title.season_count === null) return null
+    const n = title.season_count
+    const s = n > 1 ? 's' : ''
+    if (isFilm) {
+      return lang === 'fr' ? `${n} film${s} dans la saga` : `${n} film${s} in the saga`
+    }
+    return lang === 'fr' ? `${n} saison${s}` : `${n} season${s}`
+  }
+
   return (
     <Modal onClose={onClose} wide>
       <div className="detail">
@@ -157,20 +167,18 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
         <div className="detail-body">
           <div className="detail-heading">
             <div className="detail-badges">
-              <span className={`type-badge type-${title.type}`}>{TYPE_LABELS[title.type]}</span>
+              <span className={`type-badge type-${title.type}`}>{typeLabel(title.type)}</span>
               {title.tmdb_rating !== null && (
                 <span className="tmdb-rating">★ {Number(title.tmdb_rating).toFixed(1)}</span>
               )}
-              {isUpcoming(title) && <span className="upcoming-badge">À venir</span>}
+              {isUpcoming(title) && <span className="upcoming-badge">{t('titles.upcoming')}</span>}
             </div>
             <h2>{title.title}</h2>
             {title.genres && <span className="genres">{title.genres}</span>}
             {title.season_count !== null && (
               <span className="meta-line">
-                {isFilm
-                  ? `${title.season_count} film${title.season_count > 1 ? 's' : ''} dans la saga`
-                  : `${title.season_count} saison${title.season_count > 1 ? 's' : ''}`}
-                {title.episode_count !== null && ` · ${title.episode_count} épisodes`}
+                {sagaOrSeasonText()}
+                {title.episode_count !== null && ` · ${title.episode_count} ${lang === 'fr' ? 'épisodes' : 'episodes'}`}
               </span>
             )}
           </div>
@@ -183,7 +191,7 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
             target="_blank"
             rel="noopener noreferrer"
           >
-            ▶ Bande annonce
+            {t('detail.trailer')}
           </a>
         )}
         {title.description && <p className="detail-description">{title.description}</p>}
@@ -194,12 +202,12 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
             className={`now-watching-toggle ${title.now_watching ? 'active' : ''}`}
             onClick={toggleNowWatching}
           >
-            {title.now_watching ? '📌 Je regarde ça en ce moment' : '📌 Épingler comme "en ce moment"'}
+            {title.now_watching ? `📌 ${t('detail.nowWatchingOn')}` : `📌 ${t('detail.nowWatchingOff')}`}
           </button>
         </div>
 
         <div className="detail-section">
-          <h3>Mon avis</h3>
+          <h3>{t('detail.myReview')}</h3>
           <div className="status-row">
             {STATUS_ORDER.map((s) => (
               <button
@@ -208,13 +216,13 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
                 onClick={() => handleStatusChange(s)}
                 type="button"
               >
-                {STATUS_LABELS[s]}
+                {statusLabel(s)}
               </button>
             ))}
           </div>
           <form className="my-rating" onSubmit={handleSaveRating}>
             <label className="score-label">
-              Ma note
+              {t('detail.myScore')}
               <select value={score} onChange={(e) => setScore(Number(e.target.value))}>
                 {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
                   <option key={n} value={n}>
@@ -224,7 +232,7 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
               </select>
             </label>
             <textarea
-              placeholder="Un commentaire ? (optionnel)"
+              placeholder={t('detail.commentPlaceholder')}
               value={comment}
               maxLength={COMMENT_MAX_LENGTH}
               onChange={(e) => setComment(e.target.value)}
@@ -233,7 +241,7 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
               {comment.length}/{COMMENT_MAX_LENGTH}
             </span>
             <button type="submit" className={justSaved ? 'saved' : ''} disabled={saving}>
-              {justSaved ? 'Enregistré ✓' : saving ? '…' : myRating?.score ? 'Mettre à jour' : 'Noter'}
+              {justSaved ? t('detail.saved') : saving ? '…' : myRating?.score ? t('detail.update') : t('detail.rate')}
             </button>
           </form>
 
@@ -247,12 +255,11 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
                     className="season-check-all"
                     onClick={markAllSeasonsWatched}
                   >
-                    Tout cocher
+                    {t('detail.checkAll')}
                   </button>
                   <button
                     type="button"
                     className="season-edit-btn"
-                    aria-label="Corriger le nombre de saisons"
                     onClick={() => setEditingSeasonCount((v) => !v)}
                   >
                     ✎
@@ -267,7 +274,7 @@ export default function TitleDetailModal({ title, myUsername, onClose, onChange 
                     value={seasonCountInput}
                     onChange={(e) => setSeasonCountInput(e.target.value)}
                   />
-                  <button type="submit">Corriger</button>
+                  <button type="submit">{t('detail.fix')}</button>
                 </form>
               )}
               <div className="season-chips">

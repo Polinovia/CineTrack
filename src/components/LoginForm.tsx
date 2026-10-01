@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { apiFetch } from '../lib/api'
+import { useI18n } from '../lib/i18n'
 import Logo from './Logo'
 import './LoginForm.css'
 
@@ -9,6 +10,7 @@ type Props = {
 }
 
 export default function LoginForm({ onLoggedIn }: Props) {
+  const { lang, setLang, t } = useI18n()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isRegister, setIsRegister] = useState(false)
@@ -29,22 +31,22 @@ export default function LoginForm({ onLoggedIn }: Props) {
         if (res.status === 429) {
           const until = data?.locked_until ? new Date(data.locked_until) : null
           const minutes = until ? Math.max(1, Math.ceil((until.getTime() - Date.now()) / 60000)) : 15
-          setError(`Trop de tentatives. Réessayez dans ${minutes} min.`)
+          setError(`${t('login.error.locked')} ${minutes} min.`)
         } else if (data?.error === 'password_too_short') {
-          setError(`Mot de passe : au moins ${data.min_length ?? 8} caractères.`)
+          setError(`${t('login.password')}: min ${data.min_length ?? 8} ${lang === 'fr' ? 'caractères' : 'characters'}.`)
         } else if (data?.error === 'username_taken') {
-          setError('Ce pseudo est déjà pris.')
+          setError(t('login.error.usernameTaken'))
         } else if (data?.error === 'invalid_username') {
-          setError('Pseudo : entre 2 et 20 caractères.')
+          setError(t('login.error.invalidUsername'))
         } else {
-          setError('Pseudo ou mot de passe incorrect.')
+          setError(t('login.error.invalid'))
         }
         return
       }
       const data = await res.json()
       onLoggedIn(data.username)
     } catch {
-      setError("Impossible de se connecter, réessayez.")
+      setError(t('login.error.network'))
     } finally {
       setLoading(false)
     }
@@ -54,20 +56,20 @@ export default function LoginForm({ onLoggedIn }: Props) {
     <form className="login-form" onSubmit={handleSubmit}>
       <Logo size={32} />
       <span className="eyebrow">My Watchlist</span>
-      <h1>{isRegister ? 'Créer un compte' : 'Se connecter'}</h1>
+      <h1>{isRegister ? t('login.createAccount') : t('login.signIn')}</h1>
       <label>
-        Pseudo
+        {t('login.username')}
         <input
           type="text"
           autoComplete="username"
-          placeholder="Ton pseudo"
+          placeholder={t('login.usernamePlaceholder')}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
       </label>
       <label>
-        Mot de passe
+        {t('login.password')}
         <input
           type="password"
           autoComplete={isRegister ? 'new-password' : 'current-password'}
@@ -79,10 +81,13 @@ export default function LoginForm({ onLoggedIn }: Props) {
       </label>
       {error && <p className="error">{error}</p>}
       <button type="submit" disabled={loading}>
-        {loading ? '…' : isRegister ? 'Créer mon compte' : 'Entrer'}
+        {loading ? '…' : isRegister ? t('login.submitRegister') : t('login.submitLogin')}
       </button>
       <button type="button" className="switch-mode" onClick={() => setIsRegister((v) => !v)}>
-        {isRegister ? 'Déjà un compte ? Se connecter' : 'Pas de compte ? S\'inscrire'}
+        {isRegister ? t('login.switchToLogin') : t('login.switchToRegister')}
+      </button>
+      <button type="button" className="lang-toggle" onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}>
+        {lang === 'fr' ? 'EN' : 'FR'}
       </button>
     </form>
   )

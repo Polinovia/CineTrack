@@ -42,18 +42,6 @@ export type Friend = {
   friend_username: string
 }
 
-export const TYPE_LABELS: Record<TitleType, string> = {
-  film: 'Film',
-  serie: 'Série',
-  anime: 'Anime',
-}
-
-export const STATUS_LABELS: Record<TitleStatus, string> = {
-  a_voir: 'À voir',
-  en_cours: 'En cours',
-  vu: 'Vu',
-}
-
 export const STATUS_ORDER: TitleStatus[] = ['a_voir', 'en_cours', 'vu']
 
 export function isUpcoming(t: Pick<Title, 'release_date'>): boolean {

@@ -54,6 +54,9 @@ export default function LoginForm({ onLoggedIn }: Props) {
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
+      <button type="button" className="lang-toggle login-lang" onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}>
+        {lang === 'fr' ? 'EN' : 'FR'}
+      </button>
       <Logo size={32} />
       <span className="eyebrow">CineTrack</span>
       <h1>{isRegister ? t('login.createAccount') : t('login.signIn')}</h1>
@@ -85,9 +88,6 @@ export default function LoginForm({ onLoggedIn }: Props) {
       </button>
       <button type="button" className="switch-mode" onClick={() => setIsRegister((v) => !v)}>
         {isRegister ? t('login.switchToLogin') : t('login.switchToRegister')}
-      </button>
-      <button type="button" className="lang-toggle" onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}>
-        {lang === 'fr' ? 'EN' : 'FR'}
       </button>
     </form>
   )

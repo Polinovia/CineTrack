@@ -73,7 +73,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       res.status(400).json({ error: 'invalid_input' })
       return
     }
-    const cleanTitle = title.trim()
+    const cleanTitle = title.trim().replace(/<[^>]*>/g, '')
     const existing = await sql`
       select id from titles
       where owner_id = ${session.sub} and lower(title) = lower(${cleanTitle}) and type = ${type}

@@ -7,9 +7,30 @@ const LOCK_THRESHOLD = 5
 const LOCK_MINUTES = 15
 const MIN_PASSWORD_LENGTH = 8
 
+const IP_WINDOW_MS = 15 * 60 * 1000
+const IP_MAX_ATTEMPTS = 5
+const ipAttempts = new Map<string, { count: number; reset: number }>()
+
+function checkIpRate(ip: string): boolean {
+  const now = Date.now()
+  const entry = ipAttempts.get(ip)
+  if (!entry || now > entry.reset) {
+    ipAttempts.set(ip, { count: 1, reset: now + IP_WINDOW_MS })
+    return true
+  }
+  entry.count++
+  return entry.count <= IP_MAX_ATTEMPTS
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'method_not_allowed' })
+    return
+  }
+
+  const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown'
+  if (!checkIpRate(ip)) {
+    res.status(429).json({ error: 'too_many_requests' })
     return
   }
 

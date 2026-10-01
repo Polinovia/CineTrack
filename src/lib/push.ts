@@ -34,7 +34,7 @@ export async function subscribeToPush(): Promise<boolean> {
     })
   }
   const json = subscription.toJSON()
-  await apiFetch('/api/push/subscribe', {
+  await apiFetch('/api/notifications', {
     method: 'POST',
     body: JSON.stringify({ endpoint: json.endpoint, keys: json.keys }),
   })
@@ -48,5 +48,5 @@ export async function unsubscribeFromPush(): Promise<void> {
   if (!subscription) return
   const endpoint = subscription.endpoint
   await subscription.unsubscribe()
-  await apiFetch('/api/push/subscribe', { method: 'DELETE', body: JSON.stringify({ endpoint }) })
+  await apiFetch('/api/notifications', { method: 'DELETE', body: JSON.stringify({ endpoint }) })
 }

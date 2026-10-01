@@ -65,3 +65,13 @@ create table push_subscriptions (
   auth text not null,
   created_at timestamptz not null default now()
 );
+
+create table notifications (
+  id serial primary key,
+  user_id int not null references users(id) on delete cascade,
+  type text not null,
+  from_user_id int references users(id) on delete cascade,
+  title_name text,
+  read boolean not null default false,
+  created_at timestamptz not null default now()
+);

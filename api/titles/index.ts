@@ -90,6 +90,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         poster_url, description, genres, tmdb_rating::float8 as tmdb_rating,
         season_count, episode_count, release_date, trailer_url, created_at
     `
+    const friendIds = await sql`
+      select case
+        when requester_id = ${session.sub} then addressee_id
+        else requester_id
+      end as fid
+      from friendships
+      where status = 'accepted'
+        and (requester_id = ${session.sub} or addressee_id = ${session.sub})
+    `
+    await Promise.all(
+      (friendIds as Array<{ fid: number }>).map((f) =>
+        sql`insert into notifications (user_id, type, from_user_id, title_name)
+            values (${f.fid}, 'title_added', ${session.sub}, ${cleanTitle})`
+      ),
+    )
     res.status(201).json({ ...rows[0], owner: session.username, ratings: [], seasons_watched: [] })
     return
   }

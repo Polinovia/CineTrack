@@ -63,6 +63,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       values (${session.sub}, ${target[0].id})
       returning id, status
     `
+    await sql`
+      insert into notifications (user_id, type, from_user_id)
+      values (${target[0].id}, 'friend_request', ${session.sub})
+    `
     res.status(201).json({ friendship_id: rows[0].id, status: rows[0].status, friend_username: target[0].username, friend_id: target[0].id })
     return
   }
@@ -78,12 +82,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const rows = await sql`
         update friendships set status = 'accepted'
         where id = ${friendship_id} and addressee_id = ${session.sub} and status = 'pending'
-        returning id, status
+        returning id, status, requester_id
       `
       if (rows.length === 0) {
         res.status(404).json({ error: 'not_found' })
         return
       }
+      await sql`
+        insert into notifications (user_id, type, from_user_id)
+        values (${rows[0].requester_id}, 'friend_accepted', ${session.sub})
+      `
       res.status(200).json(rows[0])
       return
     }

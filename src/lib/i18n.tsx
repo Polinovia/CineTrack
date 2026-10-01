@@ -84,6 +84,18 @@ const t = {
   'friendList.search': { fr: 'Rechercher…', en: 'Search…' },
   'friendList.loading': { fr: 'Chargement…', en: 'Loading…' },
   'friendList.empty': { fr: 'Aucun titre.', en: 'No titles.' },
+
+  'nav.notifications': { fr: 'Notifications', en: 'Notifications' },
+  'notif.title': { fr: 'Notifications', en: 'Notifications' },
+  'notif.new': { fr: 'Nouvelles', en: 'New' },
+  'notif.earlier': { fr: 'Plus anciennes', en: 'Earlier' },
+  'notif.empty': { fr: 'Aucune notification.', en: 'No notifications.' },
+  'notif.markAllRead': { fr: 'Tout marquer comme lu', en: 'Mark all as read' },
+  'notif.friendRequest': { fr: 'vous a envoyé une demande d’ami.', en: 'sent you a friend request.' },
+  'notif.friendAccepted': { fr: 'a accepté votre demande d’ami.', en: 'accepted your friend request.' },
+  'notif.titleAdded': { fr: 'a ajouté', en: 'added' },
+  'notif.toTheirList': { fr: 'à sa liste.', en: 'to their list.' },
+  'notif.back': { fr: '← Retour', en: '← Back' },
 } as const
 
 export type TKey = keyof typeof t

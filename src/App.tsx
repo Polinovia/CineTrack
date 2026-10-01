@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { apiFetch } from './lib/api'
 import { useI18n } from './lib/i18n'
 import { isSubscribedToPush, pushSupported, subscribeToPush, unsubscribeFromPush } from './lib/push'
 import LoginForm from './components/LoginForm'
 import TitleList from './components/TitleList'
 import FriendList from './components/FriendList'
+import NotificationList from './components/NotificationList'
 import Logo from './components/Logo'
 import LoadingScreen from './components/LoadingScreen'
 import './App.css'
@@ -14,8 +15,9 @@ function App() {
   const [username, setUsername] = useState<string | null>(null)
   const [checking, setChecking] = useState(true)
   const [pushOn, setPushOn] = useState(false)
-  const [view, setView] = useState<'list' | 'friends'>('list')
+  const [view, setView] = useState<'list' | 'friends' | 'notifications'>('list')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     apiFetch('/api/auth/me')
@@ -23,6 +25,20 @@ function App() {
       .then((data) => setUsername(data?.username ?? null))
       .finally(() => setChecking(false))
   }, [])
+
+  const fetchUnread = useCallback(() => {
+    if (!username) return
+    apiFetch('/api/notifications')
+      .then((r) => r.json())
+      .then((data) => setUnreadCount(data.unread ?? 0))
+      .catch(() => {})
+  }, [username])
+
+  useEffect(() => {
+    fetchUnread()
+    const interval = setInterval(fetchUnread, 60000)
+    return () => clearInterval(interval)
+  }, [fetchUnread])
 
   useEffect(() => {
     if (!username || !pushSupported()) return
@@ -60,6 +76,15 @@ function App() {
           <Logo size={20} />
           CineTrack
         </span>
+        <div className="topbar-right">
+          <button
+            className="notif-bell"
+            onClick={() => { setView('notifications'); setUnreadCount(0) }}
+            aria-label={t('nav.notifications')}
+          >
+            🔔
+            {unreadCount > 0 && <span className="notif-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>}
+          </button>
         <div className="user-menu-wrap">
           <button className="user-menu-btn" onClick={() => setMenuOpen((v) => !v)}>
             {username} <span className="user-chevron">{menuOpen ? '▲' : '▼'}</span>
@@ -91,10 +116,12 @@ function App() {
             </>
           )}
         </div>
+        </div>
       </header>
 
       {view === 'list' && <TitleList myUsername={username} />}
       {view === 'friends' && <FriendList />}
+      {view === 'notifications' && <NotificationList onBack={() => setView('list')} />}
     </>
   )
 }

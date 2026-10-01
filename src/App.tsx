@@ -68,14 +68,22 @@ function App() {
             <>
               <div className="user-menu-backdrop" onClick={() => setMenuOpen(false)} />
               <div className="user-menu">
+                <button className={view === 'list' ? 'menu-active' : ''} onClick={() => { setView('list'); setMenuOpen(false) }}>
+                  📋 {t('nav.myList')}
+                </button>
+                <button className={view === 'friends' ? 'menu-active' : ''} onClick={() => { setView('friends'); setMenuOpen(false) }}>
+                  👥 {t('nav.friends')}
+                </button>
+                <hr className="menu-divider" />
                 <button onClick={() => { setLang(lang === 'fr' ? 'en' : 'fr'); setMenuOpen(false) }}>
-                  {lang === 'fr' ? '🌐 English' : '🌐 Français'}
+                  🌐 {lang === 'fr' ? 'English' : 'Français'}
                 </button>
                 {pushSupported() && (
                   <button onClick={() => { togglePush(); setMenuOpen(false) }}>
                     {pushOn ? '🔕 Notifications off' : '🔔 Notifications'}
                   </button>
                 )}
+                <hr className="menu-divider" />
                 <button className="menu-logout" onClick={handleLogout}>
                   {t('nav.logout')}
                 </button>
@@ -84,15 +92,6 @@ function App() {
           )}
         </div>
       </header>
-
-      <nav className="page-tabs">
-        <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
-          {t('nav.myList')}
-        </button>
-        <button className={view === 'friends' ? 'active' : ''} onClick={() => setView('friends')}>
-          {t('nav.friends')}
-        </button>
-      </nav>
 
       {view === 'list' && <TitleList myUsername={username} />}
       {view === 'friends' && <FriendList />}

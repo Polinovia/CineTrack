@@ -91,47 +91,17 @@
   background: var(--surface-2);
 }
 
+.user-menu .menu-active {
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.user-menu .menu-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 0.2rem 0;
+}
+
 .user-menu .menu-logout {
   color: var(--danger);
-}
-
-/* Page tabs (Ma liste / Amis) */
-.page-tabs {
-  display: flex;
-  gap: 0.3rem;
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0 1.2rem 0.6rem;
-}
-
-@media (min-width: 900px) {
-  .page-tabs {
-    max-width: none;
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
-
-.page-tabs button {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.03em;
-  padding: 0.4rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-}
-
-.page-tabs button:hover {
-  border-color: var(--accent-2);
-  color: var(--ink);
-}
-
-.page-tabs button.active {
-  background: var(--ink);
-  color: var(--bg);
-  border-color: var(--ink);
 }

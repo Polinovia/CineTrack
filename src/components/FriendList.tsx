@@ -25,6 +25,7 @@ export default function FriendList() {
   async function handleAdd(e: FormEvent) {
     e.preventDefault()
     if (!addUsername.trim()) return
+    if (!confirm(`${t('friends.confirmRequest')} ${addUsername.trim()} ?`)) return
     setAddError(null)
     setAdding(true)
     try {

@@ -65,6 +65,7 @@ const t = {
   'detail.checkAll': { fr: 'Tout cocher', en: 'Check all' },
   'detail.fix': { fr: 'Corriger', en: 'Fix' },
 
+  'friends.confirmRequest': { fr: 'Envoyer une demande d’ami à', en: 'Send a friend request to' },
   'friends.addPlaceholder': { fr: 'Ajouter un ami par pseudo…', en: 'Add a friend by username…' },
   'friends.add': { fr: 'Ajouter', en: 'Add' },
   'friends.notFound': { fr: 'Utilisateur introuvable.', en: 'User not found.' },

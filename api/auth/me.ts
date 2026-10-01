@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import bcrypt from 'bcryptjs'
 import { sql } from '../_db.js'
-import { readSession } from '../_auth.js'
+import { readSession, issueSession } from '../_auth.js'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const session = readSession(req)
@@ -16,7 +16,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === 'PATCH') {
-    const { current_password, new_password } = req.body ?? {}
+    const { current_password, new_password, new_username } = req.body ?? {}
+
+    if (typeof new_username === 'string') {
+      const trimmed = new_username.trim()
+      if (trimmed.length < 2 || trimmed.length > 20) {
+        res.status(400).json({ error: 'invalid_username' })
+        return
+      }
+      const existing = await sql`select id from users where lower(username) = lower(${trimmed}) and id != ${session.sub}`
+      if (existing.length > 0) {
+        res.status(409).json({ error: 'username_taken' })
+        return
+      }
+      await sql`update users set username = ${trimmed} where id = ${session.sub}`
+      issueSession(res, { sub: session.sub, username: trimmed })
+      res.status(200).json({ ok: true, username: trimmed })
+      return
+    }
+
     if (typeof current_password !== 'string' || typeof new_password !== 'string') {
       res.status(400).json({ error: 'invalid_input' })
       return

@@ -12,10 +12,14 @@ type Props = {
   onTogglePush: () => void
   onBack: () => void
   onLogout: () => void
+  onUsernameChanged: (name: string) => void
 }
 
-export default function Settings({ username, pushOn, onTogglePush, onBack, onLogout }: Props) {
+export default function Settings({ username, pushOn, onTogglePush, onBack, onLogout, onUsernameChanged }: Props) {
   const { lang, setLang, t } = useI18n()
+  const [newUsername, setNewUsername] = useState(username)
+  const [usernameMsg, setUsernameMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+  const [usernameLoading, setUsernameLoading] = useState(false)
   const [currentPwd, setCurrentPwd] = useState('')
   const [newPwd, setNewPwd] = useState('')
   const [showCurrentPwd, setShowCurrentPwd] = useState(false)
@@ -53,6 +57,37 @@ export default function Settings({ username, pushOn, onTogglePush, onBack, onLog
     }
   }
 
+  async function handleChangeUsername(e: FormEvent) {
+    e.preventDefault()
+    if (newUsername.trim() === username) return
+    setUsernameMsg(null)
+    setUsernameLoading(true)
+    try {
+      const res = await apiFetch('/api/auth/me', {
+        method: 'PATCH',
+        body: JSON.stringify({ new_username: newUsername.trim() }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        onUsernameChanged(data.username)
+        setUsernameMsg({ type: 'ok', text: t('settings.usernameSuccess') })
+      } else {
+        const data = await res.json().catch(() => ({}))
+        if (data.error === 'username_taken') {
+          setUsernameMsg({ type: 'err', text: t('login.error.usernameTaken') })
+        } else if (data.error === 'invalid_username') {
+          setUsernameMsg({ type: 'err', text: t('login.error.invalidUsername') })
+        } else {
+          setUsernameMsg({ type: 'err', text: t('friends.error') })
+        }
+      }
+    } catch {
+      setUsernameMsg({ type: 'err', text: t('friends.error') })
+    } finally {
+      setUsernameLoading(false)
+    }
+  }
+
   return (
     <div className="settings-page">
       <div className="settings-header">
@@ -62,10 +97,27 @@ export default function Settings({ username, pushOn, onTogglePush, onBack, onLog
 
       <div className="settings-section">
         <h3>{t('settings.account')}</h3>
-        <div className="settings-row">
-          <span className="settings-label">{t('settings.loggedAs')}</span>
-          <span className="settings-value">{username}</span>
-        </div>
+        <form className="settings-username-form" onSubmit={handleChangeUsername}>
+          <label>
+            {t('settings.username')}
+            <input
+              type="text"
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              minLength={2}
+              maxLength={20}
+              required
+            />
+          </label>
+          {usernameMsg && (
+            <p className={usernameMsg.type === 'ok' ? 'settings-pwd-ok' : 'settings-pwd-err'}>{usernameMsg.text}</p>
+          )}
+          {newUsername.trim() !== username && (
+            <button type="submit" className="settings-pwd-submit" disabled={usernameLoading || !newUsername.trim()}>
+              {usernameLoading ? '…' : t('settings.saveUsername')}
+            </button>
+          )}
+        </form>
       </div>
 
       <div className="settings-section">

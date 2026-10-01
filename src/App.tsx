@@ -132,6 +132,7 @@ function App() {
           onTogglePush={togglePush}
           onBack={() => setView('list')}
           onLogout={handleLogout}
+          onUsernameChanged={(name) => setUsername(name)}
         />
       )}
     </>

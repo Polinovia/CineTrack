@@ -154,7 +154,7 @@
 }
 
 .user-menu .menu-active {
-  color: var(--accent-2);
+  color: var(--accent);
   font-weight: 600;
 }
 

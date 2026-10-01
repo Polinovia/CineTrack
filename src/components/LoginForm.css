@@ -96,14 +96,10 @@
   margin: -0.4rem 0 0.2rem;
 }
 
-.login-form {
-  position: relative;
-}
-
-.login-form .login-lang {
-  position: absolute;
-  top: 1.5rem;
-  right: 0;
+.login-lang {
+  position: fixed;
+  top: 1.2rem;
+  right: 1.2rem;
   font-family: var(--mono);
   font-size: 0.7rem;
   font-weight: 600;
@@ -111,12 +107,13 @@
   padding: 0.3rem 0.55rem;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: transparent;
+  background: var(--surface);
   color: var(--muted);
   cursor: pointer;
+  z-index: 10;
 }
 
-.login-form .login-lang:hover {
+.login-lang:hover {
   border-color: var(--accent-2);
   color: var(--ink);
 }

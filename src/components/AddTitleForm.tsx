@@ -18,6 +18,7 @@ type Props = {
 
 export default function AddTitleForm({ onAdded }: Props) {
   const { t, typeLabel } = useI18n()
+  const [error, setError] = useState('')
   const [text, setText] = useState('')
   const [type, setType] = useState<TitleType>('film')
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
@@ -54,6 +55,7 @@ export default function AddTitleForm({ onAdded }: Props) {
   async function addTitle(titleText: string, tmdbId?: number) {
     if (!titleText.trim()) return
     setAdding(true)
+    setError('')
     try {
       const res = await apiFetch('/api/titles', {
         method: 'POST',
@@ -68,6 +70,11 @@ export default function AddTitleForm({ onAdded }: Props) {
         setText('')
         setSelected(null)
         setSuggestions([])
+      } else {
+        const data = await res.json().catch(() => ({}))
+        if (data.error === 'already_in_list') {
+          setError(t('add.alreadyInList'))
+        }
       }
     } finally {
       setAdding(false)
@@ -129,6 +136,7 @@ export default function AddTitleForm({ onAdded }: Props) {
       <button type="submit" className="add-form-submit" disabled={adding || !text.trim()}>
         {t('add.submit')}
       </button>
+      {error && <p className="add-form-error">{error}</p>}
     </form>
   )
 }

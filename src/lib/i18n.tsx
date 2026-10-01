@@ -46,6 +46,7 @@ const t = {
 
   'add.placeholder': { fr: 'Ajouter un titre…', en: 'Add a title…' },
   'add.submit': { fr: 'Ajouter', en: 'Add' },
+  'add.alreadyInList': { fr: 'Ce titre est déjà dans ta liste.', en: 'This title is already in your list.' },
 
   'now.empty': { fr: 'Épingle un titre depuis sa fiche pour le voir ici', en: 'Pin a title from its page to see it here' },
   'now.label': { fr: 'En ce moment', en: 'Now watching' },

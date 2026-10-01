@@ -74,6 +74,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return
     }
     const cleanTitle = title.trim()
+    const existing = await sql`
+      select id from titles
+      where owner_id = ${session.sub} and lower(title) = lower(${cleanTitle}) and type = ${type}
+    `
+    if (existing.length > 0) {
+      res.status(409).json({ error: 'already_in_list' })
+      return
+    }
     const enrichment =
       typeof tmdb_id === 'number' ? await enrichById(tmdb_id, type) : await enrichTitle(cleanTitle, type)
     const rows = await sql`

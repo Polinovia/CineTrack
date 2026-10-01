@@ -31,6 +31,25 @@
   gap: 0.6rem;
 }
 
+.lang-toggle {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.lang-toggle:hover {
+  border-color: var(--accent-2);
+  color: var(--ink);
+}
+
 .notif-bell {
   position: relative;
   font-size: 1.15rem;

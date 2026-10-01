@@ -1,5 +1,6 @@
 .add-form {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1.2rem;
   align-items: flex-start;
@@ -132,4 +133,11 @@
 .add-form-submit:disabled {
   opacity: 0.45;
   cursor: default;
+}
+
+.add-form-error {
+  width: 100%;
+  margin: -0.4rem 0 0;
+  font-size: 0.82rem;
+  color: var(--danger);
 }

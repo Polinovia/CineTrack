@@ -78,6 +78,12 @@ function App() {
         </span>
         <div className="topbar-right">
           <button
+            className="lang-toggle"
+            onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
+          >
+            {lang === 'fr' ? 'EN' : 'FR'}
+          </button>
+          <button
             className="notif-bell"
             onClick={() => { setView('notifications'); setUnreadCount(0) }}
             aria-label={t('nav.notifications')}

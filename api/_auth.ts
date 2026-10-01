@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import jwt from 'jsonwebtoken'
 
 const COOKIE_NAME = 'session'
-const SESSION_DAYS = 90
+const SESSION_DAYS = 30
 
 export type SessionPayload = {
   sub: number
